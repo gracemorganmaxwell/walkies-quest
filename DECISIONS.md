@@ -126,8 +126,10 @@
 - **Rationale:** No callers; dead props invite drift
 - **Trade-offs:** Reintroducing a suburb strip needs a new component
 
-- **Context:** Desire to run everything on Vercel conflicts with Flask + in-memory cache
-- **Options:** (1) migrate to Vercel serverless JS/TS now (2) keep Render + Vercel DNS; ticket the rewrite
-- **Chosen:** (2) No rewrite while live deploy is Render; issue #9 captures options/acceptance
-- **Rationale:** Avoid conflicting with DNS/deploy work; DECISIONS already locked Render for the Python process
-- **Trade-offs:** Two vendors until an explicit migrate decision
+## 2026-07-22 — Keep Render; decline Vercel serverless rewrite (#9)
+
+- **Context:** Issue #9 proposed rewriting the API for Vercel serverless so `walkies.quest` could run entirely on Vercel instead of Flask on Render + Vercel DNS
+- **Options:** (1) migrate to Vercel serverless (JS/TS + shared cache) (2) keep Render Web Service + Vercel DNS (3) split static Vercel / API Render
+- **Chosen:** (2) Stay on Render; Vercel remains DNS/registrar only; #9 closed without implementation
+- **Rationale:** Hosting decisions already locked Flask + gunicorn on Render; in-memory TTL cache and Python interview story are a poor fit for Vercel serverless as-is; no need for a second platform rewrite
+- **Trade-offs:** Free-tier cold starts and two vendors (Render host + Vercel DNS) remain accepted
