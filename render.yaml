@@ -1,0 +1,18 @@
+# walkies.quest — Render Blueprint
+# One Web Service: build SPA, install Flask deps, serve API + frontend/dist via gunicorn.
+services:
+  - type: web
+    name: walkies-quest
+    runtime: python
+    plan: free
+    region: singapore
+    branch: main
+    autoDeployTrigger: commit
+    buildCommand: npm --prefix frontend ci && npm --prefix frontend run build && pip install -r backend/requirements.txt
+    startCommand: gunicorn -b 0.0.0.0:$PORT app:app --chdir backend
+    healthCheckPath: /api/health
+    envVars:
+      - key: PYTHON_VERSION
+        value: "3.12.8"
+      - key: NODE_VERSION
+        value: "22.14.0"

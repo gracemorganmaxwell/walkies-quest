@@ -24,6 +24,14 @@
 - **Rationale:** Real Python process; Vercel has no special pairing with PaaS beyond DNS
 - **Trade-offs:** Render free ~60s cold start after idle
 
+## 2026-07-22 — Ship on Render via Blueprint; Vercel DNS only
+
+- **Context:** Need a durable public HTTPS URL + `walkies.quest`; Flask/gunicorn cannot run on Vercel as-is
+- **Options:** (1) Vercel serverless rewrite (2) Render Web Service for API+SPA; Vercel holds DNS and CNAMEs to Render (3) Railway/Fly
+- **Chosen:** (2) `render.yaml` free Python web service builds `frontend/dist`, installs `backend` deps, starts gunicorn on `$PORT`; custom domain via Vercel DNS → Render
+- **Rationale:** Matches existing hosting decision; one process serves `/api` and SPA; Blueprint keeps build/start reproducible
+- **Trade-offs:** Free tier cold starts (~60s); Blueprint create/sync still needs a Render account action once
+
 ## 2026-07-21 — UI chrome inspired by custardsquare.exe / custardsq.app
 
 - **Context:** Personal walkies.quest UI needed a stronger visual identity for demo + interview
