@@ -11,6 +11,9 @@ services:
     buildCommand: npm --prefix frontend ci && npm --prefix frontend run build && pip install -r backend/requirements.txt
     startCommand: gunicorn -b 0.0.0.0:$PORT app:app --chdir backend
     healthCheckPath: /api/health
+    # Apex + auto www redirect; DNS is Vercel ALIAS/CNAME → walkies-quest.onrender.com
+    domains:
+      - walkies.quest
     envVars:
       - key: PYTHON_VERSION
         value: "3.12.8"

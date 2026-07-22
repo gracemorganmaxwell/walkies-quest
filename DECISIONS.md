@@ -32,6 +32,14 @@
 - **Rationale:** Matches existing hosting decision; one process serves `/api` and SPA; Blueprint keeps build/start reproducible
 - **Trade-offs:** Free tier cold starts (~60s); Blueprint create/sync still needs a Render account action once
 
+## 2026-07-22 — walkies.quest DNS: Vercel ALIAS → Render
+
+- **Context:** Domain registered on Vercel returned `DEPLOYMENT_NOT_FOUND`; app lives on `walkies-quest.onrender.com`
+- **Options:** (1) keep Vercel edge ALIAS (2) apex ALIAS + www CNAME to `walkies-quest.onrender.com`; add `domains` in Blueprint; Render issues TLS
+- **Chosen:** (2) Vercel DNS records point at Render; `render.yaml` lists `domains: [walkies.quest]` (www auto-added by Render)
+- **Rationale:** Vercel stays registrar/DNS only; HTTPS certs and routing belong on the process host
+- **Trade-offs:** Must add/verify the custom domain once in Render Dashboard (or Blueprint sync); remove default Vercel edge ALIAS or traffic stays on Vercel
+
 ## 2026-07-21 — UI chrome inspired by custardsquare.exe / custardsq.app
 
 - **Context:** Personal walkies.quest UI needed a stronger visual identity for demo + interview
