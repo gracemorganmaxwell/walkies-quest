@@ -573,43 +573,6 @@ body {
   background: var(--dream-lavender);
 }
 
-.spot-row {
-  display: flex;
-  width: 100%;
-  align-items: center;
-  gap: 0.4rem;
-  margin: 0;
-  padding: 0.3rem 0.35rem;
-  border: 1px solid transparent;
-  border-radius: var(--cs-radius-sm);
-  background: transparent;
-  font-family: var(--win95-font);
-  text-align: left;
-  cursor: pointer;
-  color: var(--win95-black);
-}
-
-.spot-row:hover {
-  background: rgb(182 156 255 / 22%);
-}
-
-.spot-row--selected {
-  background: var(--dream-lavender);
-  border-color: var(--dream-purple);
-  outline: 1px dotted var(--win95-black);
-  outline-offset: -3px;
-}
-
-.spot-row__name {
-  min-width: 0;
-  flex: 1;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  font-size: 0.75rem;
-  font-weight: 700;
-}
-
 .walkies-status--dry {
   background: #fff3bf;
   color: #7a5b00;
