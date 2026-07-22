@@ -148,13 +148,15 @@ export default function App() {
                 </MapContainer>
 
                 <MapToolbar
-                  loading={loading}
                   cityName={cityName}
-                  onRefresh={() => {
-                    load();
+                  onChangeCity={() => {
+                    setCityPickerOpen(true);
+                    return undefined;
                   }}
-                  onChangeCity={() => setCityPickerOpen(true)}
-                  onOpenCredits={() => setCreditsOpen(true)}
+                  onOpenCredits={() => {
+                    setCreditsOpen(true);
+                    return undefined;
+                  }}
                 />
                 <MapLegend />
 

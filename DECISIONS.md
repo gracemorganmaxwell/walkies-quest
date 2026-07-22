@@ -85,3 +85,11 @@
 - **Chosen:** (2) Cities: Christchurch, Auckland, Wellington, Dunedin via `/api/cities` + `/api/dry-spots?city=`; toolbar = Refresh / Change city / Credits stacked left; radar overlay removed from UI
 - **Rationale:** Clearer primary actions; city switch is interview-friendly without adding filter modes
 - **Trade-offs:** Radar endpoint remains unused by UI for now; suburb lists are curated samples per city
+
+## 2026-07-22 — Toolbar is Change city / Credits only
+
+- **Context:** Manual Refresh duplicated initial load and city-switch fetches; toolbar should stay minimal for demos
+- **Options:** (1) keep Refresh (2) drop Refresh; weather loads on visit + city change; keep ~5 min server cache
+- **Chosen:** (2) MapToolbar = Change city / Credits only; loading overlay remains for fetch feedback
+- **Rationale:** Fewer chrome controls; cache already covers reload/city-switch rate limiting for Open-Meteo
+- **Trade-offs:** No one-click force re-fetch without changing city or waiting for cache TTL / process restart

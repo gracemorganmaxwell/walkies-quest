@@ -7,7 +7,6 @@ export const ICONS = {
   clock: "/icons/clock.png",
   search: "/icons/search.png",
   tools: "/icons/tools.png",
-  refresh: "/icons/refresh.png",
   notepad: "/icons/notepad.png",
   games: "/icons/games.png",
   clear: "/icons/weather/clear.png",
