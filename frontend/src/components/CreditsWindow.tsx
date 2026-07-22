@@ -46,6 +46,13 @@ export function CreditsWindow({ onClose }: CreditsWindowProps) {
               (CC BY 4.0)
             </li>
             <li>
+              Optional radar overlay by{" "}
+              <a href="https://www.rainviewer.com/" target="_blank" rel="noreferrer">
+                RainViewer
+              </a>{" "}
+              (personal / educational use)
+            </li>
+            <li>
               Basemap ©{" "}
               <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noreferrer">
                 OpenStreetMap
@@ -54,8 +61,9 @@ export function CreditsWindow({ onClose }: CreditsWindowProps) {
             </li>
           </ul>
           <p>
-            Markers are sample points at suburb centres. “Dry” means no precipitation in the
-            current model reading at that point — not a guarantee of sunshine street-by-street.
+            Markers are sample points at suburb centres. Radar is visual context only. “Dry” means
+            no precipitation in the current model reading at that point — not a guarantee of
+            sunshine street-by-street.
           </p>
         </div>
         <div className="credits-actions">

@@ -37,3 +37,13 @@ export type ApiError = {
   error: string;
   detail?: string;
 };
+
+export type RadarFrameResponse = {
+  updated_at: string;
+  frame_time: number;
+  host: string;
+  path: string;
+  tile_url_template: string;
+  coverage_url_template: string;
+  attribution: string;
+};

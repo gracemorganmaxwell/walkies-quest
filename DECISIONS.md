@@ -133,3 +133,21 @@
 - **Chosen:** (2) Stay on Render; Vercel remains DNS/registrar only; #9 closed without implementation
 - **Rationale:** Hosting decisions already locked Flask + gunicorn on Render; in-memory TTL cache and Python interview story are a poor fit for Vercel serverless as-is; no need for a second platform rewrite
 - **Trade-offs:** Free-tier cold starts and two vendors (Render host + Vercel DNS) remain accepted
+
+## 2026-07-22 — Restore RainViewer radar as optional overlay (#10)
+
+- **Context:** Radar API/UI were removed to declutter the multi-city toolbar; stretch #10 asks to bring the overlay back without crowding Change city / Credits
+- **Options:** (1) always-on radar (2) off-by-default toolbar toggle + `/api/radar-frame` with TTL cache (3) leave Open-Meteo markers only
+- **Chosen:** (2) Restore `GET /api/radar-frame` + `fetch_radar_frame`; Leaflet `TileLayer` when **Radar** is pressed; default off; Credits + on-map attribution when visible
+- **Rationale:** Latest RainViewer frame is visual context for NZ cities; suburb Open-Meteo markers stay the walk decision signal; separate fetch so RainViewer downtime cannot break dry-spots
+- **Trade-offs:** One extra toolbar button; latest frame only (no animation); personal/educational RainViewer ToS + attribution required
+
+## 2026-07-22 — Decline Open-Meteo weather-map-layer embed (#11)
+
+- **Context:** Stretch #11 explored [open-meteo/weather-map-layer](https://github.com/open-meteo/weather-map-layer) (GPL-2.0) as precip overlay alternative/complement to RainViewer
+- **Spike:** Package is MapLibre/`om://` protocol-first; ships Leaflet/OpenLayers adapters, but still depends on `@openmeteo/weather-map-layer`. Tiles are `.om` files on `map-tiles.open-meteo.com` (e.g. `dwd_icon` + `precipitation`), not plain PNG URLs — without that protocol handler we cannot render the layer on our Leaflet stack. Demo: [maps.open-meteo.com](https://maps.open-meteo.com/). Package still marked pre-production.
+- **License:** GPL-2.0. Bundling/adapting the library would push walkies.quest toward GPL-2.0; the app currently has no GPL license and we are not choosing to relicense.
+- **Product:** Model precip fields ≠ live NZ MetService radar composite; RainViewer (#10) better matches “where is rain now”; Open-Meteo suburb points remain source of truth for dry/wet.
+- **Options:** (1) adopt MapLibre + weather-map-layer under GPL-2.0 (2) keep Leaflet + RainViewer overlay; document spike and decline embed (3) reimplement OMfile decode ourselves (large, out of scope)
+- **Chosen:** (2) Do not ship weather-map-layer; RainViewer optional radar is the precip visualization; revisit only with an explicit GPL-2.0 relicensing decision
+- **Trade-offs:** No Open-Meteo model-field heatmap; NZ “live radar” story stays RainViewer-dependent; spike closes #11 without a second overlay stack

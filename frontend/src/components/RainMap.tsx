@@ -5,7 +5,9 @@ import type { Spot } from "../types";
 type RainMapProps = {
   spots: Spot[];
   selectedName: string;
-  onSelect: (name: string) => void;
+  onSelect: (name: string) => undefined;
+  radarTileUrl: string | undefined;
+  showRadar: boolean;
 };
 
 function statusColor(status: Spot["status"]): string {
@@ -35,13 +37,21 @@ function FlyToSelected({ spots, selectedName }: { spots: Spot[]; selectedName: s
   return <></>;
 }
 
-export function RainMap({ spots, selectedName, onSelect }: RainMapProps) {
+export function RainMap({ spots, selectedName, onSelect, radarTileUrl, showRadar }: RainMapProps) {
   return (
     <>
       <TileLayer
         attribution=""
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
       />
+      {showRadar && radarTileUrl && (
+        <TileLayer
+          attribution="Radar © RainViewer"
+          url={radarTileUrl}
+          opacity={0.65}
+          zIndex={200}
+        />
+      )}
       <FlyToSelected spots={spots} selectedName={selectedName} />
       {spots.map((spot) => {
         const selected = spot.name === selectedName;

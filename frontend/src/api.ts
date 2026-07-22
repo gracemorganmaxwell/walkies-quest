@@ -1,4 +1,4 @@
-import type { ApiError, CitiesResponse, DrySpotsResponse } from "./types";
+import type { ApiError, CitiesResponse, DrySpotsResponse, RadarFrameResponse } from "./types";
 
 async function readJson<T>(response: Response): Promise<T> {
   if (!response.ok) {
@@ -25,4 +25,9 @@ export async function fetchDrySpots(cityId: string): Promise<DrySpotsResponse> {
   const params = new URLSearchParams({ city: cityId });
   const response = await fetch(`/api/dry-spots?${params.toString()}`);
   return readJson<DrySpotsResponse>(response);
+}
+
+export async function fetchRadarFrame(): Promise<RadarFrameResponse> {
+  const response = await fetch("/api/radar-frame");
+  return readJson<RadarFrameResponse>(response);
 }

@@ -497,6 +497,22 @@ body {
   line-height: 1.25;
 }
 
+.map-radar-attr {
+  position: absolute;
+  bottom: 0.35rem;
+  left: 0.5rem;
+  z-index: 500;
+  margin: 0;
+  max-width: 11rem;
+  padding: 0.15rem 0.35rem;
+  background: rgb(250 248 252 / 88%);
+  border-radius: var(--cs-radius-sm);
+  font-size: 0.6rem;
+  font-weight: 600;
+  color: var(--win95-grey-darker);
+  pointer-events: none;
+}
+
 .map-question {
   position: absolute;
   top: 0.5rem;

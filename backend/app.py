@@ -1,4 +1,4 @@
-"""Flask API for walkies.quest — city dry spots."""
+"""Flask API for walkies.quest — city dry spots + optional radar frame."""
 
 from __future__ import annotations
 
@@ -10,10 +10,11 @@ from flask_cors import CORS
 
 from cache import TtlCache
 from cities import DEFAULT_CITY_ID, get_city, list_cities
-from weather import fetch_dry_spots
+from weather import fetch_dry_spots, fetch_radar_frame
 
 CACHE_TTL_SECONDS = 5 * 60
 dry_spots_cache = TtlCache(CACHE_TTL_SECONDS)
+radar_cache = TtlCache(CACHE_TTL_SECONDS)
 
 ROOT = Path(__file__).resolve().parent
 FRONTEND_DIST = ROOT.parent / "frontend" / "dist"
@@ -48,6 +49,19 @@ def dry_spots():
     return jsonify(payload)
 
 
+@app.get("/api/radar-frame")
+def radar_frame():
+    cached = radar_cache.get("radar-frame")
+    if cached is not None:
+        return jsonify(cached)
+    try:
+        payload = fetch_radar_frame()
+    except Exception as exc:  # noqa: BLE001 — surface upstream errors to the client
+        return jsonify({"error": "Failed to fetch radar", "detail": str(exc)}), 502
+    radar_cache.set("radar-frame", payload)
+    return jsonify(payload)
+
+
 @app.get("/")
 def index():
     if FRONTEND_DIST.exists():
@@ -55,7 +69,7 @@ def index():
     return jsonify(
         {
             "message": "walkies.quest API is running. Start the Vite frontend in development, or build frontend/dist for production.",
-            "endpoints": ["/api/health", "/api/cities", "/api/dry-spots"],
+            "endpoints": ["/api/health", "/api/cities", "/api/dry-spots", "/api/radar-frame"],
         }
     )
 

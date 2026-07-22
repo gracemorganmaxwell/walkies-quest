@@ -1,12 +1,12 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { MapContainer, ZoomControl } from "react-leaflet";
-import { fetchCities, fetchDrySpots } from "./api";
+import { fetchCities, fetchDrySpots, fetchRadarFrame } from "./api";
 import { CityPicker } from "./components/CityPicker";
 import { CreditsWindow } from "./components/CreditsWindow";
 import { MapLegend } from "./components/MapLegend";
 import { MapToolbar } from "./components/MapToolbar";
 import { RainMap } from "./components/RainMap";
-import type { CitySummary, DrySpotsResponse } from "./types";
+import type { CitySummary, DrySpotsResponse, RadarFrameResponse } from "./types";
 
 const FALLBACK_CITIES: CitySummary[] = [
   { id: "christchurch", name: "Christchurch", lat: -43.5321, lon: 172.6362, zoom: 11 },
@@ -47,6 +47,8 @@ export default function App() {
   const [selectedName, setSelectedName] = useState<string>("");
   const [creditsOpen, setCreditsOpen] = useState(false);
   const [cityPickerOpen, setCityPickerOpen] = useState(false);
+  const [radarOn, setRadarOn] = useState(false);
+  const [radarFrame, setRadarFrame] = useState<RadarFrameResponse | undefined>(undefined);
 
   useEffect(() => {
     let cancelled = false;
@@ -59,6 +61,28 @@ export default function App() {
       })
       .catch(() => {
         // Keep fallback cities if endpoint fails
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  useEffect(() => {
+    let cancelled = false;
+    fetchRadarFrame()
+      .then((frame) => {
+        if (cancelled) {
+          return;
+        }
+        setRadarFrame(frame);
+      })
+      .catch(() => {
+        if (cancelled) {
+          return;
+        }
+        // Radar is optional context — dry-spots path must keep working
+        setRadarFrame(undefined);
+        setRadarOn(false);
       });
     return () => {
       cancelled = true;
@@ -102,6 +126,8 @@ export default function App() {
   const wetCount = spotsForCity.filter((s) => s.status === "raining").length;
   const cityName = data?.city_id === cityId ? data.city_name : activeCity.name;
   const statusUpdatedAt = data?.city_id === cityId ? data.updated_at : undefined;
+  const radarAvailable = Boolean(radarFrame?.tile_url_template);
+  const showRadar = radarOn && radarAvailable;
 
   return (
     <div className="walkies-shell">
@@ -143,14 +169,28 @@ export default function App() {
                   <RainMap
                     spots={spotsForCity}
                     selectedName={selectedName}
-                    onSelect={setSelectedName}
+                    onSelect={(name) => {
+                      setSelectedName(name);
+                      return undefined;
+                    }}
+                    radarTileUrl={radarFrame?.tile_url_template}
+                    showRadar={showRadar}
                   />
                 </MapContainer>
 
                 <MapToolbar
                   cityName={cityName}
+                  radarOn={showRadar}
+                  radarAvailable={radarAvailable}
                   onChangeCity={() => {
                     setCityPickerOpen(true);
+                    return undefined;
+                  }}
+                  onToggleRadar={() => {
+                    if (!radarAvailable) {
+                      return undefined;
+                    }
+                    setRadarOn((prev) => !prev);
                     return undefined;
                   }}
                   onOpenCredits={() => {
@@ -159,6 +199,12 @@ export default function App() {
                   }}
                 />
                 <MapLegend />
+
+                {showRadar && radarFrame && (
+                  <p className="map-radar-attr" aria-label="Radar attribution">
+                    {radarFrame.attribution}
+                  </p>
+                )}
 
                 <p className="map-question">Where should I quest with my dogs today?</p>
 

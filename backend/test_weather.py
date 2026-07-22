@@ -1,5 +1,5 @@
 from cache import TtlCache
-from weather import rain_status, weather_label
+from weather import fetch_radar_frame, rain_status, weather_label
 
 
 def test_rain_status_clear():
@@ -31,3 +31,25 @@ def test_ttl_cache_expires(monkeypatch):
     assert cache.get("k") == {"ok": True}
     now["t"] = 120.0
     assert cache.get("k") is None
+
+
+def test_fetch_radar_frame(monkeypatch):
+    class FakeResponse:
+        def raise_for_status(self):
+            return None
+
+        def json(self):
+            return {
+                "host": "https://tilecache.rainviewer.com",
+                "radar": {
+                    "past": [{"time": 100, "path": "/v2/radar/abc"}],
+                    "nowcast": [{"time": 200, "path": "/v2/radar/def"}],
+                },
+            }
+
+    monkeypatch.setattr("weather.requests.get", lambda *args, **kwargs: FakeResponse())
+    payload = fetch_radar_frame()
+    assert payload["frame_time"] == 200
+    assert payload["path"] == "/v2/radar/def"
+    assert "{z}" in payload["tile_url_template"]
+    assert payload["attribution"] == "Radar © RainViewer"
