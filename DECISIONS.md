@@ -64,7 +64,7 @@
 
 ## 2026-07-21 — In-memory cache (5–10 min)
 
-- **Context:** Avoid hammering Open-Meteo / RainViewer on every page refresh
+- **Context:** Avoid hammering Open-Meteo on every page refresh
 - **Options:** No cache, Redis, in-memory dict with TTL
 - **Chosen:** In-memory TTL cache on the Flask process
 - **Rationale:** Enough for personal use and interview explanation; zero infra
@@ -92,7 +92,7 @@
 - **Options:** (1) Christchurch-only (2) NZ city registry with Change city dialog; vertical text buttons left; drop radar toggle and dry-only filter
 - **Chosen:** (2) Cities: Christchurch, Auckland, Wellington, Dunedin via `/api/cities` + `/api/dry-spots?city=`; toolbar = Refresh / Change city / Credits stacked left; radar overlay removed from UI
 - **Rationale:** Clearer primary actions; city switch is interview-friendly without adding filter modes
-- **Trade-offs:** Radar endpoint remains unused by UI for now; suburb lists are curated samples per city
+- **Trade-offs:** Suburb lists are curated samples per city; radar API later removed as dead code (see 2026-07-22 entry)
 
 ## 2026-07-22 — Toolbar is Change city / Credits only
 
@@ -101,3 +101,25 @@
 - **Chosen:** (2) MapToolbar = Change city / Credits only; loading overlay remains for fetch feedback
 - **Rationale:** Fewer chrome controls; cache already covers reload/city-switch rate limiting for Open-Meteo
 - **Trade-offs:** No one-click force re-fetch without changing city or waiting for cache TTL / process restart
+
+## 2026-07-22 — Remove unused RainViewer radar API
+
+- **Context:** Radar overlay was dropped from the UI (multi-city toolbar), but `GET /api/radar-frame` + RainViewer fetch/cache remained unused
+- **Options:** (1) keep endpoint for future UI (2) remove dead path and document restore as stretch
+- **Chosen:** (2) Delete `/api/radar-frame`, `fetch_radar_frame`, and radar TTL cache; Open-Meteo suburb points remain the weather source
+- **Rationale:** Prefer no unused API surface; README/Credits already omit RainViewer; restore tracked as stretch (#10)
+- **Trade-offs:** Re-adding radar needs API + UI together; historical DECISIONS still mention RainViewer as the original overlay choice
+
+## 2026-07-22 — Remove dryOnly / unused SpotList
+
+- **Context:** Dry-only filter left the toolbar earlier; `SpotList` with a `dryOnly` prop remained unreferenced after the map-only layout
+- **Options:** (1) keep SpotList for a future sidebar (2) delete dead component + CSS
+- **Chosen:** (2) Remove `SpotList.tsx` and `.spot-row*` styles; markers remain the suburb UI
+- **Rationale:** No callers; dead props invite drift
+- **Trade-offs:** Reintroducing a suburb strip needs a new component
+
+- **Context:** Desire to run everything on Vercel conflicts with Flask + in-memory cache
+- **Options:** (1) migrate to Vercel serverless JS/TS now (2) keep Render + Vercel DNS; ticket the rewrite
+- **Chosen:** (2) No rewrite while live deploy is Render; issue #9 captures options/acceptance
+- **Rationale:** Avoid conflicting with DNS/deploy work; DECISIONS already locked Render for the Python process
+- **Trade-offs:** Two vendors until an explicit migrate decision

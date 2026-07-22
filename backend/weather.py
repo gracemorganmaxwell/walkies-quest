@@ -1,4 +1,4 @@
-"""Weather helpers: Open-Meteo suburb status + RainViewer radar frame."""
+"""Weather helpers: Open-Meteo suburb dry/rain status."""
 
 from __future__ import annotations
 
@@ -9,7 +9,6 @@ import requests
 from cities import get_city
 
 OPEN_METEO_URL = "https://api.open-meteo.com/v1/forecast"
-RAINVIEWER_MAPS_URL = "https://api.rainviewer.com/public/weather-maps.json"
 REQUEST_TIMEOUT = 8
 
 # WMO weather interpretation codes that imply precipitation
@@ -118,31 +117,4 @@ def fetch_dry_spots(city_id: str | None = None) -> dict:
         "center": {"lat": city["lat"], "lon": city["lon"]},
         "zoom": city["zoom"],
         "spots": spots,
-    }
-
-
-def fetch_radar_frame() -> dict:
-    response = requests.get(RAINVIEWER_MAPS_URL, timeout=REQUEST_TIMEOUT)
-    response.raise_for_status()
-    maps = response.json()
-    host = maps.get("host", "https://tilecache.rainviewer.com")
-    radar = maps.get("radar") or {}
-    past = radar.get("past") or []
-    nowcast = radar.get("nowcast") or []
-    frames = past + nowcast
-    if not frames:
-        raise RuntimeError("RainViewer returned no radar frames")
-    latest = frames[-1]
-    path = latest["path"]
-    frame_time = latest["time"]
-    # color=2 (Universal Blue), smooth=1, snow=1
-    tile_url_template = f"{host}{path}/256/{{z}}/{{x}}/{{y}}/2/1_1.png"
-    return {
-        "updated_at": datetime.now(timezone.utc).isoformat(),
-        "frame_time": frame_time,
-        "host": host,
-        "path": path,
-        "tile_url_template": tile_url_template,
-        "coverage_url_template": f"{host}/v2/coverage/0/256/{{z}}/{{x}}/{{y}}/0/0_0.png",
-        "attribution": "Radar © RainViewer",
     }

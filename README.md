@@ -107,13 +107,12 @@ If Render asks for a specific CNAME/TXT for verification, add those exact record
 | `GET /api/health` | Liveness |
 | `GET /api/cities` | City list + default |
 | `GET /api/dry-spots?city=` | Suburb statuses from Open-Meteo (cached ~5 min) |
-| `GET /api/radar-frame` | Latest RainViewer tile URL template (cached ~5 min; unused by UI for now) |
 
 ## Data honesty
 
 - Suburb markers are **point samples**, not street-level radar.
 - “Dry” means the model/codes show no precip at that point — not a promise of sun.
-- See in-app **Credits** for Open-Meteo, RainViewer, and OpenStreetMap attribution.
+- See in-app **Credits** for Open-Meteo and OpenStreetMap attribution.
 
 ## Design decisions
 
